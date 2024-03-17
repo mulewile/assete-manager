@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 
-/*apply a background color to the body*/
+
 body {
   background-color: #f4f4f4;
   font-family: Arial, sans-serif;
@@ -16,6 +16,16 @@ body {
   padding: 0;
 }
 
+.container-fluid {
+    background-color: cadetblue;
+    padding: 20px; 
+  }
+
+.navbar-brand {
+  font-size: 2.5rem !important;
+  margin-bottom: 20px;
+  color: #cbc1c1;
+}
 
 
 .message {
@@ -26,7 +36,6 @@ body {
     padding: 20px;
     border-radius: 5px;
     border: 0.5px solid #000;
-  
     background: linear-gradient(to right, #ff9a9e, #fad0c4); 
     color: #271f1f; 
     font-weight: bold;
@@ -34,3 +43,6 @@ body {
     padding: 3rem;
 }
 
+.hidden{
+    display: none;
+}

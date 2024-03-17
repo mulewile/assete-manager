@@ -4,6 +4,7 @@ fetch("/connect.php")
     console.log(data);
 
     const messageDiv = document.createElement("div");
+    messageDiv.classList.add("hidden");
 
     messageDiv.textContent = data;
 

@@ -20,10 +20,13 @@ $database_handle = new PDO("mysql:host=$host;dbname=$database", $username, $pass
 
 //Check if the connection was successful and give the user feedback
 if(!$database_handle){
-    echo "Connection failed. Contact your system administrator";
+    $connection_feedback = "Connection failed. Contact your system administrator";
+    echo $connection_feedback;
     die("Connection failed: " . mysqli_connect_error());
 }else{
-    echo "Connected successfully";
+    $connection_array = array("connection_status" => "Connection successful", "database" => $database);
+    $connection_feedback = encode_as_json($connection_array);
+    echo $connection_feedback;
 }
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection
@@ -39,5 +42,16 @@ function decode_config_json($config_json_path){
         return $json_config_data;
     }
 }
+
+//This function encodes text as json
+//Parameters: $data - the data to be encoded as json
+function encode_as_json($data){
+    if(!is_array($data)){
+        echo "The data is not an array. Please pass an array as an argument to the function";
+        return;
+    }
+    return json_encode($data);
+}
+
 
 ?>

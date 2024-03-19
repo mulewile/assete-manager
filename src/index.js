@@ -1,8 +1,55 @@
 import getData from "./utils/getData.js";
+import getDOMElement from "./utils/getDOMElement.js";
+import resetFormFields from "./utils/resetFormFields.js";
 
-document.addEventListener("DOMContentLoaded", (event) => {
+export const createUserFormElement = getDOMElement("createUserForm");
+
+document.addEventListener("DOMContentLoaded", async (event) => {
   console.log("DOM fully loaded and parsed");
+
   const GET_DATA_URL = "/connect.php";
   const action_type = "get_data";
-  getData(GET_DATA_URL, action_type);
+  await getData(GET_DATA_URL, action_type);
+
+  resetFormFields(createUserFormElement);
 });
+
+//This event listener listens input events of input fields
+document.addEventListener("input", (event) => {
+  const EVENT_TARGET = event.target;
+  const EVENT_TARGET_VALUE = EVENT_TARGET.value;
+
+  if (EVENT_TARGET.dataset.js === "firstNameSignUp") {
+    if (!createUserFormElement) {
+      throw new Error("Input Element not found");
+    }
+
+    createUserFormElement.setAttribute("data-sign-up", "true");
+
+    if (EVENT_TARGET_VALUE === "") {
+      createUserFormElement.removeAttribute("data-sign-up");
+    }
+  }
+});
+
+//This function handles function submiting for fata
+
+document.addEventListener("submit", (event) => {
+  const EVENT_TARGET = event.target;
+  if (EVENT_TARGET.dataset.js === "createUserForm") {
+    if (!createUserFormElement) {
+      throw new Error("Input Element not found");
+    } else {
+      submitFormData(event);
+    }
+  }
+});
+
+////This function handles the submission of form data
+
+function submitFormData(event) {
+  event.preventDefault();
+  const FORM_DATA = new FormData(event.target);
+  const FORM_DATA_OBJECT = Object.fromEntries(FORM_DATA);
+  console.log("FORM_DATA_OBJECT", FORM_DATA_OBJECT);
+}

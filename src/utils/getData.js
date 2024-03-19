@@ -21,7 +21,10 @@ export default async function getData(URL, action_type) {
 }
 
 //The function displayDatabaseConnectionMessage is used to display the message on the screen.
-function displayDatabaseConnectionMessage({ connection_status, database }) {
+export function displayDatabaseConnectionMessage({
+  connection_status,
+  database,
+}) {
   const messageDiv = document.createElement("div");
   messageDiv.textContent = connection_status + " to " + database + " database";
   messageDiv.classList.add("message");

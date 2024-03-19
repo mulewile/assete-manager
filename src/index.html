@@ -15,16 +15,15 @@
   <header>
     <nav class="navbar bg-body-tertiary">
       <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Welcome to Asset Management</span>
+        <span class="navbar-brand mb-0 h1">Asset Management</span>
       </div>
     </nav>
   </header>
   <body>
-    <p>This is the main page of the Asset Management system.</p>
     <main>
-      <div class="container">
-        <h2>Create User</h2>
-        <form id="createUserForm">
+      <div class="form-container" id="formContainer" data-js="formContainer">
+        <form id="createUserForm" data-js="createUserForm" class="">
+          <h2>Create User</h2>
           <div class="mb-3">
             <label for="first_name" class="form-label">First Name</label>
             <input
@@ -32,11 +31,22 @@
               class="form-control"
               id="firstName"
               name="first_name"
+              data-js="firstNameSignUp"
               placeholder="Enter a First Name"
               required
             />
           </div>
-
+          <div class="mb-3">
+            <label for="surname" class="form-label">Surname</label>
+            <input
+              type="text"
+              class="form-control"
+              id="surname"
+              name="surname"
+              placeholder="Enter a Surname"
+              required
+            />
+          </div>
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input
@@ -45,6 +55,7 @@
               id="username"
               name="username"
               placeholder="Enter Username"
+              autocomplete="off"
               required
             />
           </div>
@@ -67,6 +78,7 @@
               id="password"
               name="password"
               placeholder="Enter Password"
+              autocomplete="off"
               required
             />
           </div>

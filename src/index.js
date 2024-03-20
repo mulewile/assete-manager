@@ -1,4 +1,5 @@
 import getData from "./utils/getData.js";
+import postData from "./utils/postData.js";
 import getDOMElement from "./utils/getDOMElement.js";
 import resetFormFields from "./utils/resetFormFields.js";
 
@@ -40,6 +41,7 @@ document.addEventListener("submit", (event) => {
     if (!createUserFormElement) {
       throw new Error("Input Element not found");
     } else {
+      event.preventDefault();
       submitFormData(event);
     }
   }
@@ -48,8 +50,10 @@ document.addEventListener("submit", (event) => {
 ////This function handles the submission of form data
 
 function submitFormData(event) {
-  event.preventDefault();
+  const POST_DATA_URL = "/connect.php";
+
   const FORM_DATA = new FormData(event.target);
   const FORM_DATA_OBJECT = Object.fromEntries(FORM_DATA);
   console.log("FORM_DATA_OBJECT", FORM_DATA_OBJECT);
+  postData(POST_DATA_URL, "user_sign_up", FORM_DATA_OBJECT);
 }

@@ -109,7 +109,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
         // Check for successful insertion
         if ($statement->rowCount() > 0) {
-            echo "User data inserted successfully.";
+            $success_message = "User data inserted successfully.";
+            $isSignedUp = true;
+            //send as json with key value pairs
+            echo json_encode(array("isSignedUp" => $isSignedUp, "message" => $success_message));
+            
+
         } else {
             echo "Error inserting user data in insert_new_user_data function.";
             $database_handle->rollback();

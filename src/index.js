@@ -4,9 +4,10 @@ import getDOMElement from "./utils/getDOMElement.js";
 import resetFormFields from "./utils/resetFormFields.js";
 
 export const createUserFormElement = getDOMElement("createUserForm");
+export const formContainerElement = getDOMElement("formContainer");
 
 document.addEventListener("DOMContentLoaded", async (event) => {
-  console.log("DOM fully loaded and parsed");
+  console.info("DOM fully loaded and parsed");
 
   const GET_DATA_URL = "/connect.php";
   const action_type = "get_data";
@@ -54,6 +55,6 @@ function submitFormData(event) {
 
   const FORM_DATA = new FormData(event.target);
   const FORM_DATA_OBJECT = Object.fromEntries(FORM_DATA);
-  console.log("FORM_DATA_OBJECT", FORM_DATA_OBJECT);
+
   postData(POST_DATA_URL, "user_sign_up", FORM_DATA_OBJECT);
 }

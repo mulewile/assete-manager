@@ -22,13 +22,18 @@ body {
   }
 
 .form-container{
-position: fixed;
+  position: fixed;
   padding: 2rem;
   background-color: #e5e5e5;
   border-radius: 5px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.login_form{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .navbar-brand {

@@ -37,10 +37,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $action_type = $request_body_data['action_type'];
         if ($action_type === "user_sign_up"){
             insert_new_user_data($request_body_data);
+        }else if($action_type === "user_login"){
+            $username = $request_body_data['loginUsername'];
+            $password = $request_body_data['password'];
+            validate_user_credentials($username, $password);
         }
-        
     }
-  
   }
   
 //Thi function inserts new user data in the database
@@ -142,6 +144,53 @@ function create_hashed_password($password){
         return;
     }
     return $hashed_password;
+}
+
+
+//This function checks for valid username and password
+//Parameters: $username, $password
+function validate_user_credentials($username, $password){
+
+    global $database_handle;
+    if(!isset($username) && !isset($password)){
+        echo "The username and password are missing. Please provide a username and password.";
+        return;
+    }
+    if(!isset($username)){
+        echo "The username is missing. Please provide a username.";
+        return;
+    }
+    
+    $select_username_sql = "SELECT USERNAME FROM user_table WHERE USERNAME = ?";
+    $select_username_statement = $database_handle->prepare($select_username_sql);
+    if(!$select_username_statement){
+        echo "Error: " . $database_handle->error;
+        return;
+    }
+    $select_username_statement->bindParam(1, $username);
+    if(!$select_username_statement){
+        echo "Error: " . $database_handle->error;
+        return;
+    }
+    $select_username_statement->execute();
+    if(!$select_username_statement){
+        echo "Error: " . $database_handle->error;
+        return;
+    }
+    $selected_username = $select_username_statement->fetchColumn();
+    if(!$selected_username){
+        echo "The username does not exist. Please provide a valid username.";
+        return;
+    }else{
+        echo json_encode(array("username" => $selected_username));
+    }
+
+    if(!isset($password)){
+        echo "The password is missing. Please provide a password.";
+        return;
+    }
+
+  
 }
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection

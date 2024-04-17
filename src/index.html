@@ -21,8 +21,12 @@
   </header>
   <body>
     <main>
-      <div class="form-container" id="formContainer" data-js="formContainer">
-        <form id="createUserForm" data-js="createUserForm" class="">
+      <div
+        class="form-container hidden"
+        id="formContainer"
+        data-js="formContainer"
+      >
+        <form id="createUserForm" data-js="createUserForm">
           <h2>Create User</h2>
           <div class="mb-3">
             <label for="first_name" class="form-label">First Name</label>
@@ -89,6 +93,39 @@
             data-js="activateLogin"
           >
             Login
+          </button>
+        </form>
+      </div>
+      <div class="form-container" id="loginContainer" data-js="loginContainer">
+        <form id="loginForm" data-js="loginForm" class="login_form">
+          <label for="loginUsername" class="form-label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="loginUsername"
+            data-js="loginUsername"
+            name="loginUsername"
+            placeholder="Enter Username"
+            autocomplete="off"
+            required
+          />
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Enter Password"
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="btn btn-primary">Login</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-js="activateSignUp"
+          >
+            Sign Up
           </button>
         </form>
       </div>

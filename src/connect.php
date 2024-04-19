@@ -179,19 +179,79 @@ function validate_user_credentials($username, $password){
     }
     $selected_username = $select_username_statement->fetchColumn();
     if(!$selected_username){
-        echo "The username does not exist. Please provide a valid username.";
+        echo json_encode(array("warning" => "The username does not exist. Please provide a valid username."));
         return;
     }else{
-        echo json_encode(array("username" => $selected_username));
+        $is_login_successful = verify_user_password($password, $selected_username);
+
+        if($is_login_successful){
+            echo json_encode(array("username" => $selected_username, "isLoginSuccessful" => $is_login_successful));
+        }
     }
 
     if(!isset($password)){
         echo "The password is missing. Please provide a password.";
         return;
     }
-
-  
 }
+
+//This function verifies the user password
+//We use sleep(3) to prevent brute force attacks.
+//Parameters: $password, $username
+
+
+function verify_user_password($password, $username){
+
+    if(!isset($password)){
+        echo "The password is missing. Please provide a password.";
+        return;
+    }else{
+
+    global $database_handle;
+
+    $select_hashed_password_sql = "SELECT HASHED_PASSWORD FROM user_table WHERE USERNAME = ?";
+
+    $select_hashed_password_statement = $database_handle->prepare($select_hashed_password_sql);
+
+        if(!$select_hashed_password_statement){
+            echo "Error: " . $database_handle->error;
+            return;
+        }
+
+        $select_hashed_password_statement->bindParam(1, $username);
+
+        if(!$select_hashed_password_statement){
+            echo "Error: " . $database_handle->error;
+            return;
+        }
+
+        $select_hashed_password_statement->execute();
+
+        if(!$select_hashed_password_statement){
+            echo "Error: " . $database_handle->error;
+            return;
+        }
+
+        $hashed_password = $select_hashed_password_statement->fetchColumn();
+
+        if(!$hashed_password){
+            echo "The hashed password does not exist. Please contact your system administrator.";
+            return;
+        }
+
+        $isPasswordVerified = password_verify($password, $hashed_password);
+
+        if(!$isPasswordVerified){
+            //sleep(3);
+            echo "The password or username is incorrect. Please provide a valid password and username.";
+            return;
+        }else{
+            echo "The password has been verified.";
+            return $isPasswordVerified;
+        }
+    }
+}
+
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection
 //Parameters: $config_json_path - the path to the json configuration file

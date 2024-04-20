@@ -240,18 +240,50 @@ function verify_user_password($password, $username){
         }
 
         $isPasswordVerified = password_verify($password, $hashed_password);
+     
 
         if(!$isPasswordVerified){
-            //sleep(3);
+            sleep(3);
             echo "The password or username is incorrect. Please provide a valid password and username.";
             return;
         }else{
-            echo "The password has been verified.";
+            $session_id = set_session_cookies();
+            $success_message = "You have successfully logged in.";
+            echo json_encode(array("session_id" => $session_id, "message" => $success_message));
             return $isPasswordVerified;
         }
     }
 }
 
+
+//This function sets session cookies and gets the session id
+//Parameters: None
+//Returns: $session_id
+
+
+function set_session_cookies(){
+
+    $secure = true; // if you only want to receive the cookie over HTTPS
+    $httponly = true; // prevent JavaScript access to session cookie
+    $samesite = 'lax'; 
+    $maxlifetime = 60 * 60 * 24; // 1 day
+
+    session_set_cookie_params([
+        'lifetime' => $maxlifetime,
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'],
+        'secure' => $secure,
+        'httponly' => $httponly,
+        'samesite' => $samesite
+    ]);
+
+    session_start();
+
+    $session_id = session_id();
+
+    return $session_id;
+ 
+}
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection
 //Parameters: $config_json_path - the path to the json configuration file

@@ -4,7 +4,7 @@
 
 export default function getDOMElement(selector) {
   const element = document.querySelector(`[data-js="${selector}"]`);
-  console.log(element);
+
   if (!element) {
     throw new Error(`No element with the data-js of ${selector} found`);
   }

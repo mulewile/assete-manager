@@ -5,14 +5,16 @@ import resetFormFields from "./utils/resetFormFields.js";
 
 export const createUserFormElement = getDOMElement("createUserForm");
 export const loginFormElement = getDOMElement("loginForm");
+export const loginFormContainerElement = getDOMElement("loginContainer");
 export const formContainerElement = getDOMElement("formContainer");
+export const appHeaderElement = getDOMElement("appHeader");
 
 document.addEventListener("DOMContentLoaded", async (event) => {
   console.info("DOM fully loaded and parsed");
 
   const GET_DATA_URL = "/connect.php";
   const action_type = "get_data";
-  await getData(GET_DATA_URL, action_type);
+  //await getData(GET_DATA_URL, action_type);
 
   resetFormFields(createUserFormElement);
 });

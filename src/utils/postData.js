@@ -1,4 +1,8 @@
-import { formContainerElement } from "../index.js";
+import {
+  formContainerElement,
+  loginFormContainerElement,
+  appHeaderElement,
+} from "../index.js";
 
 //This function is used to post data to the server
 //Paramaters: URL, action_type, data
@@ -13,11 +17,18 @@ export default async function postData(URL, action_type, post_data) {
   try {
     if (response.ok) {
       const response_data = await response.json();
-      console.log("response_data", response_data.isSignedUp);
+
+      console.log("response_data", response_data);
       if (response_data.isSignedUp === true) {
         //create own function for this
         formContainerElement.reset();
         formContainerElement.classList.add("hidden");
+      } else if (
+        response_data.is_logged_in === true &&
+        response_data.is_session_valid === true
+      ) {
+        loginFormContainerElement.classList.add("hidden");
+        appHeaderElement.classList.remove("hidden");
       }
     } else {
       console.error("Something went wrong:", response.statusText);

@@ -28,6 +28,8 @@ if(!$database_handle){
     die("Connection failed: " . mysqli_connect_error());
 }
 
+$is_session_valid = false; //Global variable to check if the session is valid
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting data from input
     $form_data = file_get_contents('php://input');
@@ -184,9 +186,9 @@ function validate_user_credentials($username, $password){
     }else{
         $is_login_successful = verify_user_password($password, $selected_username);
 
-        if($is_login_successful){
-            echo json_encode(array("username" => $selected_username, "isLoginSuccessful" => $is_login_successful));
-        }
+        // if($is_login_successful){
+        //     echo json_encode(array("username" => $selected_username, "isLoginSuccessful" => $is_login_successful));
+        // }
     }
 
     if(!isset($password)){
@@ -247,9 +249,10 @@ function verify_user_password($password, $username){
             echo "The password or username is incorrect. Please provide a valid password and username.";
             return;
         }else{
+            $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
             $session_id = set_session_cookies();
-            $success_message = "You have successfully logged in.";
-            echo json_encode(array("session_id" => $session_id, "message" => $success_message));
+            $success_message = "You are logged in.";
+            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "is_session_valid" =>$is_session_valid));
             return $isPasswordVerified;
         }
     }
@@ -259,7 +262,7 @@ function verify_user_password($password, $username){
 //This function sets session cookies and gets the session id
 //Parameters: None
 //Returns: $session_id
-
+//Warning: Currently, session_regenerate_id does not handle an unstable network well, e.g. Mobile and WiFi network. Therefore, you may experience a lost session by calling session_regenerate_id. 
 
 function set_session_cookies(){
 
@@ -268,16 +271,24 @@ function set_session_cookies(){
     $samesite = 'lax'; 
     $maxlifetime = 60 * 60 * 24; // 1 day
 
-    session_set_cookie_params([
-        'lifetime' => $maxlifetime,
-        'path' => '/',
-        'domain' => $_SERVER['HTTP_HOST'],
-        'secure' => $secure,
-        'httponly' => $httponly,
-        'samesite' => $samesite
-    ]);
-
     session_start();
+
+    $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
+
+    if($is_session_valid){
+
+        session_set_cookie_params([
+            'lifetime' => $maxlifetime,
+            'path' => '/',
+            'domain' => $_SERVER['HTTP_HOST'],
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite 
+        ]);
+    
+        session_regenerate_id(); // regenerate session id to prevent session fixation attacks
+    }
+  
 
     $session_id = session_id();
 

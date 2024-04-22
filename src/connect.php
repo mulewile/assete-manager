@@ -37,13 +37,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if(isset($request_body_data['action_type'])) {
         $action_type = $request_body_data['action_type'];
-        if ($action_type === "user_sign_up"){
-            insert_new_user_data($request_body_data);
-        }else if($action_type === "user_login"){
+        if($is_session_valid){
+            if ($action_type === "user_sign_up"){
+                insert_new_user_data($request_body_data);
+            }
+        }else {
+            if($action_type === "user_login"){
             $username = $request_body_data['loginUsername'];
             $password = $request_body_data['password'];
             validate_user_credentials($username, $password);
         }
+    }
     }
   }
   
@@ -81,11 +85,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $surname = $request_body_data['surname'];
     $email = $request_body_data['email'];
     $username = $request_body_data['username'];
+    $user_abbreviation = extract_character_from_string($first_name, 0) . extract_character_from_string($surname, 0);
+    $user_session_id = session_id();
     $user_password = $request_body_data['password'];
     $hashed_password = create_hashed_password($user_password);
 
     
-    $sql = "INSERT INTO user_table (FIRST_NAME, SURNAME, EMAIL, USERNAME, HASHED_PASSWORD, REGISTRATION) VALUES (?, ?, ?, ?, ?, NOW())";
+    $sql = "INSERT INTO user_table (FIRST_NAME, SURNAME, EMAIL, USERNAME, HASHED_PASSWORD, USER_SESSION_ID, ABBR, REGISTRATION) VALUES (?, ?, ?, ?, ?,?,?, NOW())";
   
     try {
         $statement = $database_handle->prepare($sql);
@@ -101,6 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $statement->bindParam(3, $email);
         $statement->bindParam(4, $username);
         $statement->bindParam(5, $hashed_password);
+        $statement->bindParam(6, $user_session_id);
+        $statement->bindParam(7, $user_abbreviation);
   
      
         $statement->execute();
@@ -128,6 +136,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
+}
+
+//this function gets a specified characther from a string
+//Parameters: $string, $offset
+
+function extract_character_from_string($string, $offset){
+    if(!isset($string) && !isset($offset)){
+        echo "The string and offset are missing. Please provide a string and offset.";
+        return;
+    }
+    $extracted_character = substr($string, $offset);
+    return $extracted_character;
 }
 
 
@@ -209,7 +229,7 @@ function verify_user_password($password, $username){
         return;
     }else{
 
-    global $database_handle;
+    global $database_handle, $is_session_valid;
 
     $select_hashed_password_sql = "SELECT HASHED_PASSWORD FROM user_table WHERE USERNAME = ?";
 
@@ -249,7 +269,7 @@ function verify_user_password($password, $username){
             echo "The password or username is incorrect. Please provide a valid password and username.";
             return;
         }else{
-            $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
+            //$is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
             $session_id = set_session_cookies();
             $success_message = "You are logged in.";
             echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "is_session_valid" =>$is_session_valid));

@@ -1,3 +1,5 @@
+import { loginFormContainerElement } from "../index.js";
+
 export default async function getData(URL, action_type) {
   const response = await fetch(URL, {
     method: "POST",
@@ -10,7 +12,11 @@ export default async function getData(URL, action_type) {
   try {
     if (response.ok) {
       const respons_data = await response.json();
-      displayDatabaseConnectionMessage(respons_data);
+      console.log("¬respons_data", respons_data);
+      if (respons_data.is_logged_in === "true") {
+        loginFormContainerElement.classList.add("hidden");
+      }
+
       return respons_data;
     } else {
       throw new Error("Something went wrong");

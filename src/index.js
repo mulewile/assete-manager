@@ -14,9 +14,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
   const GET_DATA_URL = "/connect.php";
   const action_type = "get_data";
-  //await getData(GET_DATA_URL, action_type);
-
-  resetFormFields(createUserFormElement);
+  await getData(GET_DATA_URL, action_type);
 });
 
 //This event listener listens input events of input fields

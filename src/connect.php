@@ -28,18 +28,22 @@ if(!$database_handle){
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$is_session_valid = false; //Global variable to check if the session is valid
+$is_session_valid; //Global variable to check if the session is valid
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting data from input
     $form_data = file_get_contents('php://input');
     $request_body_data = json_decode($form_data, true); //True makes it an associative array where the keys are strings.
-    
+    global $is_session_valid;
     if(isset($request_body_data['action_type'])) {
+        //debugging to check if the action_type is set
+     
         $action_type = $request_body_data['action_type'];
         if($is_session_valid){
             if ($action_type === "user_sign_up"){
                 insert_new_user_data($request_body_data);
+            }else if ($action_type === "get_data"){
+                echo json_encode(array( "is_logged_in" => true, "is_session_valid" => $is_session_valid));
             }
         }else {
             if($action_type === "user_login"){
@@ -228,7 +232,7 @@ function verify_user_password($password, $username){
         echo "The password is missing. Please provide a password.";
         return;
     }else{
-
+    
     global $database_handle, $is_session_valid;
 
     $select_hashed_password_sql = "SELECT HASHED_PASSWORD FROM user_table WHERE USERNAME = ?";
@@ -269,7 +273,7 @@ function verify_user_password($password, $username){
             echo "The password or username is incorrect. Please provide a valid password and username.";
             return;
         }else{
-            //$is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
+            $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
             $session_id = set_session_cookies();
             $success_message = "You are logged in.";
             echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "is_session_valid" =>$is_session_valid));
@@ -307,6 +311,7 @@ function set_session_cookies(){
         ]);
     
         session_regenerate_id(); // regenerate session id to prevent session fixation attacks
+        
     }
   
 

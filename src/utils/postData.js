@@ -29,6 +29,7 @@ export default async function postData(URL, action_type, post_data) {
       ) {
         loginFormContainerElement.classList.add("hidden");
         appHeaderElement.classList.remove("hidden");
+        console.log("User is logged in");
       }
     } else {
       console.error("Something went wrong:", response.statusText);

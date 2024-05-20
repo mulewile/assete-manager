@@ -34,18 +34,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting data from input
     $form_data = file_get_contents('php://input');
     $request_body_data = json_decode($form_data, true); //True makes it an associative array where the keys are strings.
-    global $is_session_valid;
+    //global $is_session_valid;
+    $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
     if(isset($request_body_data['action_type'])) {
         //debugging to check if the action_type is set
-     
+   
         $action_type = $request_body_data['action_type'];
         if($is_session_valid){
+       
             if ($action_type === "user_sign_up"){
                 insert_new_user_data($request_body_data);
             }else if ($action_type === "get_data"){
                 echo json_encode(array( "is_logged_in" => true, "is_session_valid" => $is_session_valid));
             }
         }else {
+            echo "$is_session_valid, You are not logged in. Please log in.";
+            exit;
             if($action_type === "user_login"){
             $username = $request_body_data['loginUsername'];
             $password = $request_body_data['password'];

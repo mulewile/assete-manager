@@ -1,23 +1,30 @@
-import { loginFormContainerElement } from "../index.js";
+import { loginFormContainerElement, appHeaderElement } from "../index.js";
 
 export default async function getData(URL, action_type) {
   const response = await fetch(URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      action: action_type,
-    },
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action_type }),
   });
 
   try {
     if (response.ok) {
-      const respons_data = await response.json();
-      console.log("¬respons_data", respons_data);
-      if (respons_data.is_logged_in === "true") {
-        loginFormContainerElement.classList.add("hidden");
+      const response_data = await response.json();
+      console.log("response_data", response_data);
+
+      if (
+        response_data.is_logged_in === true &&
+        response_data.is_session_valid === true
+      ) {
+        appHeaderElement.classList.remove("hidden");
+      } else if (
+        response_data.is_logged_in !== true &&
+        response_data.is_session_valid !== true
+      ) {
+        loginFormContainerElement.classList.remove("hidden");
       }
 
-      return respons_data;
+      return response_data;
     } else {
       throw new Error("Something went wrong");
     }

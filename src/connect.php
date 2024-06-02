@@ -32,11 +32,12 @@ if(!$database_handle){
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting data from input
+  
     $form_data = file_get_contents('php://input');
     $request_body_data = json_decode($form_data, true); //True makes it an associative array where the keys are strings.
     //global $is_session_valid;
-    session_start();
-    $is_session_valid = is_session_cookie_valid();
+    $maxlifetime = 4 * 60;
+    $is_session_valid = is_session_cookie_valid($maxlifetime);
     if(isset($request_body_data['action_type'])) {
         //debugging to check if the action_type is set
    
@@ -51,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }else if(!$is_session_valid) {
         
             if($action_type === "user_login"){
+                //debugging to check where the code is breaking
             $username = $request_body_data['loginUsername'];
             $password = $request_body_data['password'];
             validate_user_credentials($username, $password);
@@ -280,8 +282,9 @@ function verify_user_password($password, $username){
             return;
         }else{
            
-            $session_id = set_session_cookies();
-            $is_session_valid = is_session_cookie_valid();
+            set_session_cookies();
+            $maxlifetime = 4 * 60;
+            $is_session_valid = is_session_cookie_valid($maxlifetime);
             $success_message = "You are logged in.";
             echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "is_session_valid" =>$is_session_valid));
             return $isPasswordVerified;
@@ -294,17 +297,20 @@ function verify_user_password($password, $username){
 //Parameters: None
 //Returns: $session_id
 //Warning: Currently, session_regenerate_id does not handle an unstable network well, e.g. Mobile and WiFi network. Therefore, you may experience a lost session by calling session_regenerate_id. 
-
 function set_session_cookies() {
     $secure = true; // if you only want to receive the cookie over HTTPS
     $httponly = true; // prevent JavaScript access to session cookie
     $samesite = 'Lax';
-    $maxlifetime = 60 * 60 * 24; // 1 day
+    $maxlifetime = 4 * 60; // 4 minutes
+
+            // Set the session max lifetime
+            ini_set('session.gc_maxlifetime', $maxlifetime);
 
     // Check if the session is valid
-    $is_session_valid = is_session_cookie_valid();
+    $is_session_valid = is_session_cookie_valid($maxlifetime);
 
-    if(!$is_session_valid){
+    if (!$is_session_valid) {
+
         // Set session cookie parameters
         session_set_cookie_params([
             'lifetime' => $maxlifetime,
@@ -318,7 +324,10 @@ function set_session_cookies() {
         session_start();
 
         // Regenerate session ID to prevent session fixation attacks
-        session_regenerate_id(true); 
+        session_regenerate_id(true);
+
+        // Store the session start time
+        $_SESSION['session_start_time'] = time();
     } else {
         session_start();
     }
@@ -328,17 +337,36 @@ function set_session_cookies() {
     return $session_id;
 }
 
-// This function checks if the session cookie is valid
-// Parameters: None
-// Returns: Boolean
-function is_session_cookie_valid() {
-    // Check if the session is active and the session ID is not empty
-    if (session_status() === PHP_SESSION_ACTIVE && !empty(session_id()) && isset($_COOKIE[session_name()])) {
-        // Additional logic to check expiration can be added here if needed
-        return true;
+
+function is_session_cookie_valid($maxlifetime) {
+    // Check if the session is active
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start(); // Ensure session is started before checking
     }
-    return false;
+
+    // Check if the session ID is not empty
+    if (empty(session_id())) {
+        return false;
+    }
+
+    // Check if the session cookie is set
+    if (!isset($_COOKIE[session_name()])) {
+        return false;
+    }
+
+    // Check if the session has expired
+    if (isset($_SESSION['session_start_time'])) {
+        $session_start_time = $_SESSION['session_start_time'];
+        if ((time() - $session_start_time) > $maxlifetime) {
+            return false; // Session has expired
+        }
+    } else {
+        return false; // No session start time found
+    }
+
+    return true;
 }
+
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection
 //Parameters: $config_json_path - the path to the json configuration file

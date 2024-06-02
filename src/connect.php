@@ -28,14 +28,15 @@ if(!$database_handle){
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$is_session_valid; //Global variable to check if the session is valid
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting data from input
     $form_data = file_get_contents('php://input');
     $request_body_data = json_decode($form_data, true); //True makes it an associative array where the keys are strings.
     //global $is_session_valid;
-    $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
+    session_start();
+    $is_session_valid = is_session_cookie_valid();
     if(isset($request_body_data['action_type'])) {
         //debugging to check if the action_type is set
    
@@ -47,14 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }else if ($action_type === "get_data"){
                 echo json_encode(array( "is_logged_in" => true, "is_session_valid" => $is_session_valid));
             }
-        }else {
-            echo "$is_session_valid, You are not logged in. Please log in.";
-            exit;
+        }else if(!$is_session_valid) {
+        
             if($action_type === "user_login"){
             $username = $request_body_data['loginUsername'];
             $password = $request_body_data['password'];
             validate_user_credentials($username, $password);
+            return;
         }
+        echo json_encode(array( "is_logged_in" => false, "is_session_valid" => $is_session_valid));
     }
     }
   }
@@ -237,7 +239,7 @@ function verify_user_password($password, $username){
         return;
     }else{
     
-    global $database_handle, $is_session_valid;
+    global $database_handle;
 
     $select_hashed_password_sql = "SELECT HASHED_PASSWORD FROM user_table WHERE USERNAME = ?";
 
@@ -277,8 +279,9 @@ function verify_user_password($password, $username){
             echo "The password or username is incorrect. Please provide a valid password and username.";
             return;
         }else{
-            $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
+           
             $session_id = set_session_cookies();
+            $is_session_valid = is_session_cookie_valid();
             $success_message = "You are logged in.";
             echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "is_session_valid" =>$is_session_valid));
             return $isPasswordVerified;
@@ -292,19 +295,17 @@ function verify_user_password($password, $username){
 //Returns: $session_id
 //Warning: Currently, session_regenerate_id does not handle an unstable network well, e.g. Mobile and WiFi network. Therefore, you may experience a lost session by calling session_regenerate_id. 
 
-function set_session_cookies(){
-
+function set_session_cookies() {
     $secure = true; // if you only want to receive the cookie over HTTPS
     $httponly = true; // prevent JavaScript access to session cookie
-    $samesite = 'lax'; 
+    $samesite = 'Lax';
     $maxlifetime = 60 * 60 * 24; // 1 day
 
-    session_start();
+    // Check if the session is valid
+    $is_session_valid = is_session_cookie_valid();
 
-    $is_session_valid = session_status() !== PHP_SESSION_ACTIVE || empty(session_id());
-
-    if($is_session_valid){
-
+    if(!$is_session_valid){
+        // Set session cookie parameters
         session_set_cookie_params([
             'lifetime' => $maxlifetime,
             'path' => '/',
@@ -313,16 +314,30 @@ function set_session_cookies(){
             'httponly' => $httponly,
             'samesite' => $samesite 
         ]);
-    
-        session_regenerate_id(); // regenerate session id to prevent session fixation attacks
-        
+
+        session_start();
+
+        // Regenerate session ID to prevent session fixation attacks
+        session_regenerate_id(true); 
+    } else {
+        session_start();
     }
-  
 
     $session_id = session_id();
 
     return $session_id;
- 
+}
+
+// This function checks if the session cookie is valid
+// Parameters: None
+// Returns: Boolean
+function is_session_cookie_valid() {
+    // Check if the session is active and the session ID is not empty
+    if (session_status() === PHP_SESSION_ACTIVE && !empty(session_id()) && isset($_COOKIE[session_name()])) {
+        // Additional logic to check expiration can be added here if needed
+        return true;
+    }
+    return false;
 }
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection

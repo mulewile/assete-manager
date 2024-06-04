@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maxlifetime = 4 * 60;
     $is_session_valid = is_session_cookie_valid($maxlifetime);
     if(isset($request_body_data['action_type'])) {
-        //debugging to check if the action_type is set
+      
    
         $action_type = $request_body_data['action_type'];
         if($is_session_valid){

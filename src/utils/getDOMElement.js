@@ -6,7 +6,8 @@ export default function getDOMElement(selector) {
   const element = document.querySelector(`[data-js="${selector}"]`);
 
   if (!element) {
-    throw new Error(`No element with the data-js of ${selector} found`);
+    const errorMessage = `No element with the data-js attribute of ${selector} found`;
+    throw new Error(errorMessage);
   }
   return element;
 }

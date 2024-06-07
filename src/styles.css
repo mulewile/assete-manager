@@ -68,6 +68,26 @@ body {
     padding: 3rem;
 }
 
+.hardware_table {
+  font-family: Arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.hardware_table td, .hardware_table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.hardware_table th{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+  border-spacing: 0;
+}
+
 .hidden{
     display: none;
 }

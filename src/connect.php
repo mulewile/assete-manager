@@ -301,8 +301,8 @@ function set_session_cookies() {
     $secure = true; // if you only want to receive the cookie over HTTPS
     $httponly = true; // prevent JavaScript access to session cookie
     $path = '/';
-    $samesite = 'Lax'; // CSRF protection, meaning the cookie will only be sent in a same-site request
-    $maxlifetime = 4 * 60; // 4 minutes
+    $samesite = 'Lax'; 
+    $maxlifetime = 60 * 60 * 8; // 8 hours
 
     // Set the session max lifetime
     ini_set('session.gc_maxlifetime', $maxlifetime);

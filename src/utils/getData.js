@@ -12,15 +12,9 @@ export default async function getData(URL, action_type) {
       const response_data = await response.json();
       console.log("response_data", response_data);
 
-      if (
-        response_data.is_logged_in === true &&
-        response_data.is_session_valid === true
-      ) {
+      if (response_data.is_logged_in === true) {
         appHeaderElement.classList.remove("hidden");
-      } else if (
-        response_data.is_logged_in !== true &&
-        response_data.is_session_valid !== true
-      ) {
+      } else if (response_data.is_logged_in !== true) {
         loginFormContainerElement.classList.remove("hidden");
       }
 

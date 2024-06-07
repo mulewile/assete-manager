@@ -1,5 +1,5 @@
 import {
-  formContainerElement,
+  createUserFormContainerElement,
   loginFormContainerElement,
   appHeaderElement,
 } from "../index.js";
@@ -21,15 +21,16 @@ export default async function postData(URL, action_type, post_data) {
       console.log("response_data", response_data);
       if (response_data.isSignedUp === true) {
         //create own function for this
-        formContainerElement.reset();
-        formContainerElement.classList.add("hidden");
-      } else if (
-        response_data.is_logged_in === true &&
-        response_data.is_session_valid === true
-      ) {
+        createUserFormContainerElement.reset();
+        createUserFormContainerElement.classList.add("hidden");
+      } else if (response_data.is_logged_in === true) {
         loginFormContainerElement.classList.add("hidden");
         appHeaderElement.classList.remove("hidden");
         console.log("User is logged in");
+      } else if (response_data.is_logged_in === false) {
+        loginFormContainerElement.classList.remove("hidden");
+        appHeaderElement.classList.add("hidden");
+        console.log("User is not logged in");
       }
     } else {
       console.error("Something went wrong:", response.statusText);

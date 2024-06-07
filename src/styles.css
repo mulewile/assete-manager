@@ -42,6 +42,16 @@ body {
   color: #cbc1c1;
 }
 
+.dropdown-menu[data-bs-popper] {
+  top: 109%;
+  right: 0px;
+  margin-top: 0.125rem;
+}
+
+.dropdown-menu {
+  min-width: 6rem;
+  right: 0px;
+}
 
 .message {
     position: fixed;

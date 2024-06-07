@@ -32,12 +32,12 @@ if(!$database_handle){
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting data from input
-  
+
     $form_data = file_get_contents('php://input');
     $request_body_data = json_decode($form_data, true); //True makes it an associative array where the keys are strings.
     //global $is_session_valid;
-    $maxlifetime = 4 * 60;
-    $is_session_valid = is_session_cookie_valid($maxlifetime);
+
+    $is_session_valid = is_session_cookie_valid();
     if(isset($request_body_data['action_type'])) {
       
    
@@ -48,6 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 insert_new_user_data($request_body_data);
             }else if ($action_type === "get_data"){
                 echo json_encode(array( "is_logged_in" => true, "is_session_valid" => $is_session_valid));
+            }else if($action_type === "user_logout"){
+                end_user_session();
             }
         }else if(!$is_session_valid) {
         
@@ -282,11 +284,11 @@ function verify_user_password($password, $username){
             return;
         }else{
            
-            set_session_cookies();
-            $maxlifetime = 4 * 60;
-            $is_session_valid = is_session_cookie_valid($maxlifetime);
+            $session_details = set_session_cookies();
+          
+         
             $success_message = "You are logged in.";
-            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "is_session_valid" =>$is_session_valid));
+            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "session_id" => $session_details['session_id'], "session_name" => $session_details['session_name']));
             return $isPasswordVerified;
         }
     }
@@ -300,73 +302,86 @@ function verify_user_password($password, $username){
 function set_session_cookies() {
     $secure = true; // if you only want to receive the cookie over HTTPS
     $httponly = true; // prevent JavaScript access to session cookie
-    $samesite = 'Lax';
+    $path = '/';
+    $samesite = 'Lax'; // CSRF protection, meaning the cookie will only be sent in a same-site request
     $maxlifetime = 4 * 60; // 4 minutes
 
-            // Set the session max lifetime
-            ini_set('session.gc_maxlifetime', $maxlifetime);
+    // Set the session max lifetime
+    ini_set('session.gc_maxlifetime', $maxlifetime);
+
+    // Start or resume the session
+    session_start();
 
     // Check if the session is valid
-    $is_session_valid = is_session_cookie_valid($maxlifetime);
-
-    if (!$is_session_valid) {
-
-        // Set session cookie parameters
-        session_set_cookie_params([
-            'lifetime' => $maxlifetime,
-            'path' => '/',
-            'domain' => $_SERVER['HTTP_HOST'],
-            'secure' => $secure,
-            'httponly' => $httponly,
-            'samesite' => $samesite 
-        ]);
-
-        session_start();
-
+    if (!is_session_cookie_valid()) {
         // Regenerate session ID to prevent session fixation attacks
         session_regenerate_id(true);
 
         // Store the session start time
         $_SESSION['session_start_time'] = time();
-    } else {
-        session_start();
+
+        // Set the session cookie manually
+        setcookie(
+            session_name(), // Cookie name, usually PHPSESSID
+            session_id(),   // Cookie value, the session ID
+            [
+                'expires' => time() + $maxlifetime,
+                'path' => $path,
+                'domain' => $_SERVER['HTTP_HOST'],
+                'secure' => $secure,
+                'httponly' => $httponly,
+                'samesite' => $samesite,
+            ]
+        );
     }
 
     $session_id = session_id();
-
-    return $session_id;
+    $session_name = session_name();
+ // return both session id and session name
+    return array("session_id" => $session_id, "session_name" => $session_name);
 }
 
+//This function checks if the session cookie is valid
+//Parameters: None
+//Returns: true if the session cookie is valid, false otherwise
 
-function is_session_cookie_valid($maxlifetime) {
-    // Check if the session is active
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start(); // Ensure session is started before checking
-    }
-
-    // Check if the session ID is not empty
-    if (empty(session_id())) {
-        return false;
-    }
-
-    // Check if the session cookie is set
-    if (!isset($_COOKIE[session_name()])) {
-        return false;
-    }
-
-    // Check if the session has expired
-    if (isset($_SESSION['session_start_time'])) {
-        $session_start_time = $_SESSION['session_start_time'];
-        if ((time() - $session_start_time) > $maxlifetime) {
-            return false; // Session has expired
-        }
+function is_session_cookie_valid() {
+    if (isset($_COOKIE['PHPSESSID'])) {
+        return true;
     } else {
-        return false; // No session start time found
+        return false; 
     }
-
-    return true;
 }
 
+//This function ends the user session and deletes the cookie.
+//Parameters: None
+//Returns: None
+function end_user_session(){
+    session_start();
+    session_destroy();
+
+  
+    $secure = true; // if you only want to receive the cookie over HTTPS
+    $httponly = true; // prevent JavaScript access to session cookie
+    $path = '/';
+    $samesite = 'Lax'; // CSRF protection, meaning the cookie will only be sent in a same-site request
+
+    // Delete the session cookie
+    setcookie(
+        session_name(),
+        '', // Clear the cookie value
+        [
+            'expires' => time() - 42000, // Set time in the past to delete the cookie
+            'path' => $path,
+            'domain' => $_SERVER['HTTP_HOST'],
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite,
+        ]
+    );
+    $database_handle = null;
+    echo json_encode(array("is_logged_in" => false, "is_session_valid" => false, "message" => "You have been logged out."));
+}
 
 //This function decodes the json configuration file which contains the environmental variables for the database connection
 //Parameters: $config_json_path - the path to the json configuration file

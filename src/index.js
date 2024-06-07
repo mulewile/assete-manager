@@ -6,8 +6,11 @@ import resetFormFields from "./utils/resetFormFields.js";
 export const createUserFormElement = getDOMElement("createUserForm");
 export const loginFormElement = getDOMElement("loginForm");
 export const loginFormContainerElement = getDOMElement("loginContainer");
-export const formContainerElement = getDOMElement("formContainer");
+export const createUserFormContainerElement = getDOMElement(
+  "createUserFormContainer"
+);
 export const appHeaderElement = getDOMElement("appHeader");
+export const logOutUserButtonElement = getDOMElement("logOutUserButton");
 
 document.addEventListener("DOMContentLoaded", async (event) => {
   console.info("DOM fully loaded and parsed");
@@ -63,6 +66,16 @@ document.addEventListener("submit", (event) => {
       event.preventDefault();
       submitFormData(event);
     }
+  }
+});
+
+//This function handles document click events through event delegation
+document.addEventListener("click", (event) => {
+  const EVENT_TARGET = event.target;
+  if (EVENT_TARGET.dataset.js === "logOutUserButton") {
+    const LOG_OUT_URL = "/connect.php";
+    const action_type = "user_logout";
+    postData(LOG_OUT_URL, action_type, {});
   }
 });
 

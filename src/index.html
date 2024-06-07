@@ -12,36 +12,56 @@
       crossorigin="anonymous"
     />
   </head>
-  <header data-js="appHeader" class="hidden">
-    <nav class="navbar bg-body-tertiary">
-      <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Asset Management</span>
-        <button class="btn btn-primary" data-js="home">Home</button>
-        <div class="dropdown">
-          <button
-            class="btn btn-primary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            data-js="user"
-          >
-            User
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Create User</a></li>
-            <li><a class="dropdown-item" href="#">Logout</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </header>
+
   <body>
+    <header data-js="appHeader" class="hidden">
+      <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Asset Management</span>
+          <button class="btn btn-primary" data-js="home">Home</button>
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="manageUser"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              User Management
+            </button>
+            <ul
+              class="dropdown-menu dropdown-menu-dark"
+              aria-labelledby="manageUser"
+            >
+              <li>
+                <button
+                  class="dropdown-item user_logOut active"
+                  data-js="logOutUserButton"
+                >
+                  Logout
+                </button>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button class="dropdown-item" data-js="userProfileButton">
+                  Profile
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item" data-js="createUser">
+                  Create User
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
     <main>
       <div
         class="form-container hidden"
         id="formContainer"
-        data-js="formContainer"
+        data-js="createUserFormContainer"
       >
         <form id="createUserForm" data-js="createUserForm">
           <h2>Create User</h2>
@@ -142,13 +162,6 @@
             required
           />
           <button type="submit" class="btn btn-primary">Login</button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-js="activateSignUp"
-          >
-            New User
-          </button>
         </form>
       </div>
     </main>

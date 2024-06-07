@@ -285,10 +285,8 @@ function verify_user_password($password, $username){
         }else{
            
             $session_details = set_session_cookies();
-          
-         
             $success_message = "You are logged in.";
-            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "session_id" => $session_details['session_id'], "session_name" => $session_details['session_name']));
+            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message));
             return $isPasswordVerified;
         }
     }

@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="author" content="William Mulenga Chanda" />
     <title>Asset Management</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <link
@@ -163,6 +169,30 @@
           />
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
+      </div>
+      <div class="hardware_table-container">
+        <table id="hardwareTable" class="hardwareTable" data-js="hardwareTable">
+          <thead class="hardwareTable_thead">
+            <tr>
+              <th data-name="asset_id">Asset ID</th>
+              <th data-name="hardware_name" data-js="hardwareName">
+                Hardware Name
+              </th>
+              <th data-name="type">Type</th>
+              <th data-name="manufacturer">Manufacturer</th>
+              <th data-name="modell">Model</th>
+              <th data-name="serial_number">Serial Number</th>
+              <th data-name="imei_number">IMEI Number</th>
+              <th data-name="location">Location</th>
+              <th data-name="user">User</th>
+              <th data-name="datum">Date Assigned</th>
+              <th data-name="purchase_date">Purchase Date</th>
+              <th data-name="warranty_expiry">Warranty Expiry</th>
+              <th data-name="condition">Condition</th>
+            </tr>
+          </thead>
+          <tbody class="hardwareTable_body" data-js="hardwareTableBody"></tbody>
+        </table>
       </div>
     </main>
     <script src="index.js" type="module"></script>

@@ -70,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 function get_all_hardware_data(){
     global $database_handle;
     $sql = "SELECT 
+        ID,
         HARDWARE_ID, 
         HARDWARE_NAME, 
         `TYPE`, 
@@ -102,6 +103,7 @@ function get_all_hardware_data(){
         $all_hardware_data = [];
         while($row = $all_hardware_select_statement->fetch()){
             $all_hardware_data[] = [
+                "id" => $row['ID'],
                 "hardware_id" => $row['HARDWARE_ID'],
                 "hardware_name" => $row['HARDWARE_NAME'],
                 "type" => $row['TYPE'],

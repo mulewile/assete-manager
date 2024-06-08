@@ -24,7 +24,7 @@
       <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
           <span class="navbar-brand mb-0 h1">Asset Management</span>
-          <button class="btn btn-primary" data-js="home">Home</button>
+          <button class="btn btn-secondary" data-js="home">Home</button>
           <div class="dropdown">
             <button
               class="btn btn-secondary dropdown-toggle"
@@ -170,36 +170,47 @@
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
       </div>
-      <div
-        class="hardware_table-container table-responsive hidden"
-        data-js="hardwareTableContainer"
-      >
-        <table
-          id="hardwareTable"
-          class="hardware_table"
-          data-js="hardwareTable"
+      <div class="main_body-container">
+        <div class="main_menu">
+          <h3>Main Menu</h3>
+          <button class="btn btn-primary" data-js="hardwareListButton">
+            Hardware List
+          </button>
+        </div>
+        <div
+          class="hardware_table-container table-responsive hidden"
+          data-js="hardwareTableContainer"
         >
-          <thead class="hardwareTable_thead">
-            <tr>
-              <th data-name="hardware_id">Hardware ID</th>
-              <th data-name="hardware_name" data-js="hardwareName">
-                Hardware Name
-              </th>
-              <th data-name="type">Type</th>
-              <th data-name="manufacturer">Manufacturer</th>
-              <th data-name="modell">Model</th>
-              <th data-name="serial_number">Serial Number</th>
-              <th data-name="imei_number">IMEI Number</th>
-              <th data-name="location">Location</th>
-              <th data-name="current_user">User</th>
-              <th data-name="datum">Date Assigned</th>
-              <th data-name="purchase_date">Purchase Date</th>
-              <th data-name="warranty_expiry">Warranty Expiry</th>
-              <th data-name="condition">Condition</th>
-            </tr>
-          </thead>
-          <tbody class="hardwareTable_body" data-js="hardwareTableBody"></tbody>
-        </table>
+          <table
+            id="hardwareTable"
+            class="hardware_table"
+            data-js="hardwareTable"
+          >
+            <thead class="hardwareTable_thead">
+              <tr>
+                <th data-name="hardware_id">Hardware ID</th>
+                <th data-name="hardware_name" data-js="hardwareName">
+                  Hardware Name
+                </th>
+                <th data-name="type">Type</th>
+                <th data-name="manufacturer">Manufacturer</th>
+                <th data-name="modell">Model</th>
+                <th data-name="serial_number">Serial Number</th>
+                <th data-name="imei_number">IMEI Number</th>
+                <th data-name="location">Location</th>
+                <th data-name="current_user">User</th>
+                <th data-name="datum">Date Assigned</th>
+                <th data-name="purchase_date">Purchase Date</th>
+                <th data-name="warranty_expiry">Warranty Expiry</th>
+                <th data-name="condition">Condition</th>
+              </tr>
+            </thead>
+            <tbody
+              class="hardwareTable_body"
+              data-js="hardwareTableBody"
+            ></tbody>
+          </table>
+        </div>
       </div>
     </main>
     <script src="index.js" type="module"></script>

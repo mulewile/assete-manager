@@ -17,7 +17,7 @@ body {
 }
 
 .container-fluid {
-    background-color: cadetblue;
+    background-color: #045793;
     padding: 20px; 
   }
 
@@ -83,11 +83,18 @@ body {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #2f7d43;
+  background-color: #5b5b5b;
   color: white;
   border-spacing: 0;
 }
-
+.main_menu{
+  display: flex;
+flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #045793;
+  color: white;
+}
 .hidden{
     display: none;
 }

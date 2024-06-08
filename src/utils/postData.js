@@ -3,7 +3,10 @@ import {
   loginFormContainerElement,
   appHeaderElement,
   hardwareTableContainerElement,
+  hardwareTableBodyElement,
+  hardwareTableElement,
 } from "../index.js";
+import { create_table_body } from "./utils.js";
 
 //This function is used to post data to the server
 //Paramaters: URL, action_type, data
@@ -28,9 +31,16 @@ export default async function postData(URL, action_type, post_data) {
         loginFormContainerElement.classList.add("hidden");
         appHeaderElement.classList.remove("hidden");
         hardwareTableContainerElement.classList.remove("hidden");
+        const hardware_data = response_data.all_hardware_data;
+        create_table_body(
+          hardware_data,
+          hardwareTableBodyElement,
+          hardwareTableElement
+        );
       } else if (response_data.is_logged_in === false) {
         loginFormContainerElement.classList.remove("hidden");
         appHeaderElement.classList.add("hidden");
+        hardwareTableContainerElement.classList.add("hidden");
         console.log("User is not logged in");
       }
     } else {

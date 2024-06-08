@@ -106,7 +106,7 @@ function get_all_hardware_data(){
                 "hardware_name" => $row['HARDWARE_NAME'],
                 "type" => $row['TYPE'],
                 "manufacturer" => $row['MANUFACTURER'],
-                "model" => $row['MODELL'],
+                "modell" => $row['MODELL'],
                 "serial_number" => $row['SERIAL_NUMBER'],
                 "imei_number" => $row['IMEI_NUMBER'],
                 "location" => $row['LOCATION'],
@@ -120,9 +120,12 @@ function get_all_hardware_data(){
         return $all_hardware_data;
 
     } catch (PDOException $e) {
-        die($e);
+        die("Error fetching hardware data: " . $e->getMessage());
     }
 }
+
+
+
 
 //Thi function inserts new user data in the database
  // Debugging to check if request_body_data has values

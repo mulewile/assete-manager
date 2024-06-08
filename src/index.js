@@ -1,6 +1,7 @@
 import getData from "./utils/getData.js";
 import postData from "./utils/postData.js";
 import getDOMElement from "./utils/getDOMElement.js";
+
 import resetFormFields from "./utils/resetFormFields.js";
 
 export const createUserFormElement = getDOMElement("createUserForm");
@@ -14,6 +15,8 @@ export const logOutUserButtonElement = getDOMElement("logOutUserButton");
 export const hardwareTableContainerElement = getDOMElement(
   "hardwareTableContainer"
 );
+export const hardwareTableElement = getDOMElement("hardwareTable");
+export const hardwareTableBodyElement = getDOMElement("hardwareTableBody");
 
 document.addEventListener("DOMContentLoaded", async (event) => {
   console.info("DOM fully loaded and parsed");

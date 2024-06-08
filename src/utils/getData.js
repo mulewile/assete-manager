@@ -2,7 +2,10 @@ import {
   loginFormContainerElement,
   appHeaderElement,
   hardwareTableContainerElement,
+  hardwareTableBodyElement,
+  hardwareTableElement,
 } from "../index.js";
+import { create_table_body } from "./utils.js";
 
 export default async function getData(URL, action_type) {
   const response = await fetch(URL, {
@@ -20,10 +23,12 @@ export default async function getData(URL, action_type) {
         appHeaderElement.classList.remove("hidden");
         hardwareTableContainerElement.classList.remove("hidden");
         const hardware_data = response_data.all_hardware_data;
-        for (const hardware of hardware_data) {
-          console.log(`${hardware.hardware_name}`, hardware);
-        }
-        console.log("All hardware", response_data.all_hardware_data);
+        create_table_body(
+          hardware_data,
+          hardwareTableBodyElement,
+          hardwareTableElement
+        );
+        console.log("hardware data response", hardware_data);
       } else if (response_data.is_logged_in !== true) {
         loginFormContainerElement.classList.remove("hidden");
       }

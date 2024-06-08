@@ -47,7 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($action_type === "user_sign_up"){
                 insert_new_user_data($request_body_data);
             }else if ($action_type === "get_data"){
-                echo json_encode(array( "is_logged_in" => true, "is_session_valid" => $is_session_valid));
+                $all_hardware_data = get_all_hardware_data();
+                echo json_encode(array( "is_logged_in" => true, "is_session_valid" => $is_session_valid, "all_hardware_data" => $all_hardware_data));
             }else if($action_type === "user_logout"){
                 end_user_session();
             }
@@ -65,6 +66,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
   }
   
+
+function get_all_hardware_data(){
+    global $database_handle;
+    $sql = "SELECT 
+        HARDWARE_ID, 
+        HARDWARE_NAME, 
+        `TYPE`, 
+        MANUFACTURER, 
+        MODELL, 
+        SERIAL_NUMBER, 
+        IMEI_NUMBER, 
+        `LOCATION`, 
+        `CURRENT_USER`, 
+        DATUM, 
+        PURCHASE_DATE, 
+        WARRANTY_EXPIRY, 
+        `CONDITION` 
+        FROM hardware";
+
+    try {
+        $all_hardware_select_statement = $database_handle->prepare($sql);
+        if(!$all_hardware_select_statement){
+            echo "Error: " . $database_handle->error;
+            $database_handle->rollback();
+            exit;
+        }
+        $all_hardware_select_statement->execute();
+        if(!$all_hardware_select_statement){
+            echo "Error: " . $database_handle->error;
+            $database_handle->rollback();
+            exit;
+        }
+        $all_hardware_select_statement->setFetchMode(PDO::FETCH_ASSOC);
+        $all_hardware_data = [];
+        while($row = $all_hardware_select_statement->fetch()){
+            $all_hardware_data[] = [
+                "hardware_id" => $row['HARDWARE_ID'],
+                "hardware_name" => $row['HARDWARE_NAME'],
+                "type" => $row['TYPE'],
+                "manufacturer" => $row['MANUFACTURER'],
+                "model" => $row['MODELL'],
+                "serial_number" => $row['SERIAL_NUMBER'],
+                "imei_number" => $row['IMEI_NUMBER'],
+                "location" => $row['LOCATION'],
+                "current_user" => $row['CURRENT_USER'],
+                "datum" => $row['DATUM'],
+                "purchase_date" => $row['PURCHASE_DATE'],
+                "warranty_expiry" => $row['WARRANTY_EXPIRY'],
+                "condition" => $row['CONDITION']
+            ];
+        }
+        return $all_hardware_data;
+
+    } catch (PDOException $e) {
+        die($e);
+    }
+}
+
 //Thi function inserts new user data in the database
  // Debugging to check if request_body_data has values
 
@@ -286,7 +345,8 @@ function verify_user_password($password, $username){
            
             $session_details = set_session_cookies();
             $success_message = "You are logged in.";
-            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message));
+            $all_hardware_data = get_all_hardware_data();
+            echo json_encode(array("is_logged_in" => $isPasswordVerified, "message" => $success_message, "all_hardware_data" => $all_hardware_data));
             return $isPasswordVerified;
         }
     }

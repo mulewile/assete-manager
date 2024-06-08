@@ -2,6 +2,7 @@ import {
   createUserFormContainerElement,
   loginFormContainerElement,
   appHeaderElement,
+  hardwareTableContainerElement,
 } from "../index.js";
 
 //This function is used to post data to the server
@@ -26,7 +27,7 @@ export default async function postData(URL, action_type, post_data) {
       } else if (response_data.is_logged_in === true) {
         loginFormContainerElement.classList.add("hidden");
         appHeaderElement.classList.remove("hidden");
-        console.log("User is logged in");
+        hardwareTableContainerElement.classList.remove("hidden");
       } else if (response_data.is_logged_in === false) {
         loginFormContainerElement.classList.remove("hidden");
         appHeaderElement.classList.add("hidden");

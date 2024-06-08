@@ -11,6 +11,9 @@ export const createUserFormContainerElement = getDOMElement(
 );
 export const appHeaderElement = getDOMElement("appHeader");
 export const logOutUserButtonElement = getDOMElement("logOutUserButton");
+export const hardwareTableContainerElement = getDOMElement(
+  "hardwareTableContainer"
+);
 
 document.addEventListener("DOMContentLoaded", async (event) => {
   console.info("DOM fully loaded and parsed");

@@ -1,4 +1,8 @@
-import { loginFormContainerElement, appHeaderElement } from "../index.js";
+import {
+  loginFormContainerElement,
+  appHeaderElement,
+  hardwareTableContainerElement,
+} from "../index.js";
 
 export default async function getData(URL, action_type) {
   const response = await fetch(URL, {
@@ -14,6 +18,12 @@ export default async function getData(URL, action_type) {
 
       if (response_data.is_logged_in === true) {
         appHeaderElement.classList.remove("hidden");
+        hardwareTableContainerElement.classList.remove("hidden");
+        const hardware_data = response_data.all_hardware_data;
+        for (const hardware of hardware_data) {
+          console.log(`${hardware.hardware_name}`, hardware);
+        }
+        console.log("All hardware", response_data.all_hardware_data);
       } else if (response_data.is_logged_in !== true) {
         loginFormContainerElement.classList.remove("hidden");
       }

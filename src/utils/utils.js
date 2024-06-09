@@ -25,7 +25,7 @@ export function create_table_body(
       const detail = th_element.dataset.name;
       const dataCell = document.createElement("td");
 
-      table_row.setAttribute("data-name", detail);
+      dataCell.setAttribute("data-name", detail);
       table_row.setAttribute("id", data.id);
 
       dataCell.textContent = data[detail];
